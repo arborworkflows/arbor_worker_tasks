@@ -13,3 +13,4 @@ def rowsToFile(table):
 
     df = pd.DataFrame(table['rows'], columns=table['fields'])
     df.to_csv('out.csv', index=False)
+    return 'out.csv'

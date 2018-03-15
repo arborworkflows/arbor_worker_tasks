@@ -1,0 +1,6 @@
+name: Arbor worker tasks
+description: A plugin that provides Arbor tasks
+version: 0.0.0
+dependencies:
+  - jobs
+  - worker
