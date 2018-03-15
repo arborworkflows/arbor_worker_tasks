@@ -11,6 +11,8 @@ from girder_worker_utils.transforms.girder_io import (
     GirderUploadToItem)
 
 from arbor_worker_tasks import tasks
+from arbor_worker_tasks.transforms import GirderFileToRows, RowsToGirderItem
+
 
 class ArborTasks(Resource):
 
@@ -30,17 +32,16 @@ class ArborTasks(Resource):
         .errorResponse('Read access was denied for the item.', 403)
     )
     def aggregateTableByAverage(self, file, column):
-
-        file_id = str(file['_id'])
-        item_id = str(file['itemId'])
+        fileId = str(file['_id'])
+        itemId = str(file['itemId'])
 
         if file['mimeType'] != 'text/csv':
             raise RestException("File must be of type 'text/csv'", code=422)
 
         a = tasks.aggregateTableByAverage.delay(
-            GirderFileId(file_id),
+            GirderFileToRows(fileId),
             column,
-            girder_result_hooks=[GirderUploadToItem(item_id)]
+            girder_result_hooks=[RowsToGirderItem(itemId, 'aggregated.csv')]
         )
 
         return a.job

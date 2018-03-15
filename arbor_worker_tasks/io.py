@@ -8,9 +8,9 @@ def fileToRows(filename):
         'rows': [{k: v for k, v in row.iteritems()} for _, row in df.iterrows()]
     }
 
-def rowsToFile(table):
+def rowsToFile(table, outFile='out.csv'):
     import pandas as pd
 
     df = pd.DataFrame(table['rows'], columns=table['fields'])
-    df.to_csv('out.csv', index=False)
-    return 'out.csv'
+    df.to_csv(outFile, index=False)
+    return outFile

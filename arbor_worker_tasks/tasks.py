@@ -3,14 +3,7 @@ from girder_worker.utils import girder_job
 
 @girder_job(title='Append Columns')
 @app.task()
-def appendColumns(inTable1File, inTable2File, indexColumn):
-    # ------------------------------------------------------------------------
-    # Input boilerplate
-    from .io import fileToRows
-    inTable1 = fileToRows(inTable1File)
-    inTable2 = fileToRows(inTable2File)
-    # ------------------------------------------------------------------------
-
+def appendColumns(inTable1, inTable2, indexColumn):
     # input: inTable1 - a list of rows (2D table)
     # input: inTable2 = a second list of rows
     # input: indexColumn - an attribute name to use as an index to merge data together
@@ -53,22 +46,12 @@ def appendColumns(inTable1File, inTable2File, indexColumn):
 
     outTable = {'fields': outColumns,'rows':outRows}
 
-    # ------------------------------------------------------------------------
-    # Output boilerplate
-    from .io import rowsToFile
-    return rowsToFile(outTable)
-    # ------------------------------------------------------------------------
+    return outTable
 
 
 @girder_job(title='Aggregate Table by Average')
 @app.task()
-def aggregateTableByAverage(tableFile, column):
-    # ------------------------------------------------------------------------
-    # Input boilerplate
-    from .io import fileToRows
-    table = fileToRows(tableFile)
-    # ------------------------------------------------------------------------
-
+def aggregateTableByAverage(table, column):
     # roll up the values of a table's rows according to discrete values in a selected "groupBy" column.
     # The number of output rows in the table will be equal to the number of discrete values in the
     # groupBy column.  The values in the other columns will be the average of the values of all rows which
@@ -137,9 +120,5 @@ def aggregateTableByAverage(tableFile, column):
     output['fields'] = table['fields']
     output['rows'] = outputrows
 
-    # ------------------------------------------------------------------------
-    # Output boilerplate
-    from .io import rowsToFile
-    return rowsToFile(output)
-    # ------------------------------------------------------------------------
+    return output
 

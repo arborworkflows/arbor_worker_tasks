@@ -1,8 +1,10 @@
 import arbor_worker_tasks.tasks as tasks
-
+from arbor_worker_tasks.io import fileToRows
 
 def testAppendColumns():
-  f = tasks.appendColumns('in1.csv', 'in2.csv', 'id')
+    out = tasks.appendColumns(fileToRows('in1.csv'), fileToRows('in2.csv'), 'id')
+    print(out)
 
 def testAggregateTableByAverage():
-  f = tasks.aggregateTableByAverage('in3.csv', 'a')
+    out = tasks.aggregateTableByAverage(fileToRows('in3.csv'), 'a')
+    print(out)
