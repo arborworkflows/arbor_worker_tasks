@@ -4,7 +4,7 @@
 
 ## Testing
 
-`python test.py` produces `out.csv` which should be the columns appended
+Run the test suite with `tox` (requires `pip install tox` from your Python environment).
 
 ## JS Client Build Setup
 
