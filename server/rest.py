@@ -45,3 +45,23 @@ class ArborTasks(Resource):
         )
 
         return a.job
+
+  @access.public(scope=TokenScope.DATA_READ) # pylint: disable=E1120
+    @filtermodel(model=JobModel)
+    @autoDescribeRoute(
+        Description('Accept a string of an organism to explore.  Return a matrix of possible taxa from Encyclopia of Life.')
+        .responseClass('Job')
+        # what do we use for modelParams?
+        .modelParam('string')
+        .param('query', description='The taxa name search string')
+        .errorResponse('Please enter a string')
+    )
+    def buildTaxonMatrixFromEOLQuery(self, query):
+
+        a = tasks.buildTaxonMatrixFromEOLQuery.delay(
+            query,
+            girder_result_hooks=[RowsToGirderItem(itemId, 'taxa_matrix.csv')]
+        )
+
+        return a.job
+
