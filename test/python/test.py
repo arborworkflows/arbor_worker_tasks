@@ -8,3 +8,7 @@ def testAppendColumns():
 def testAggregateTableByAverage():
     out = tasks.aggregateTableByAverage(fileToRows('in3.csv'), 'a')
     print(out)
+
+def testBuildTaxonMatrixFromEOL():
+    out = tasks.buildTaxonMatrixFromEOLQuery('whale')
+    print(out)

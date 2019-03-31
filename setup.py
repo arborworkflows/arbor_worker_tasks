@@ -24,7 +24,9 @@ setup(
         'girder_worker_utils',
         # TODO: Add additional packages required by both
         # producer and consumer side installations
-        'pandas'
+        'pandas',
+        'requests',
+        'json'
     ],
     extras_require={
         'girder': [
