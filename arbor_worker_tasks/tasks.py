@@ -3,7 +3,7 @@ from girder_worker.utils import girder_job
 
 # for EOL interface tasks
 import requests
-from lxml import html
+#from lxml import html
 
 
 @girder_job(title='Append Columns')
@@ -131,7 +131,7 @@ def aggregateTableByAverage(table, column):
 
 @girder_job(title='Build Taxon Matrix from EOL Query')
 @app.task()
-def buildTaxonMatrixFromEOLQuery(query):
+def buildTaxonMatrixFromEOLQuery(query,maxImagesPerTaxon=5):
    
     #
     # access the EOL API to find matching taxa/subtaxa that match a query term
@@ -182,7 +182,7 @@ def buildTaxonMatrixFromEOLQuery(query):
         
         # many informal taxonomies with creator names , pass only the first two words in the taxonomic name
         cleanedName = cleanTaxonName(name)
-        print('name cleaned to:',cleanedName)
+        #print('name cleaned to:',cleanedName)
         
         # test if we have seen this taxon before
         if cleanedName not in nameSet:
@@ -196,19 +196,24 @@ def buildTaxonMatrixFromEOLQuery(query):
             #find the page number and images for this taxon.  We extract the page number from the page link
             questionMarkPosition = link.find('?')
             eolPageNumber = link[15:questionMarkPosition]
-            #print 'page number:',eolPageNumber
+            #print('page number:',eolPageNumber)
             taxaRow['pagenumber'] = eolPageNumber
             taxaRow['page'] = link
         
             # now find the images on the corresponding taxon media page
-            mediaQuery = 'https://eol.org/api/pages/1.0/'+eolPageNumber+'.json?details=true&images_per_page=10'
+            mediaQuery = 'https://eol.org/api/'+eolPageNumber+'.json?details=true&images_per_page=10'
+            #print('mediaQuery:',mediaQuery)
             response = requests.get(mediaQuery)
-            jsonReturn = response.json()
-            if 'dataObjects' in jsonReturn['taxonConcept']:
-                dataObjects = jsonReturn['taxonConcept']['dataObjects']
-                for obj in dataObjects:
-                    if 'mediaURL' in obj:
-                        images.append(obj['mediaURL'])
+            try:
+                jsonReturn = response.json()
+                images = []
+                if 'dataObjects' in jsonReturn['taxonConcept']:
+                    dataObjects = jsonReturn['taxonConcept']['dataObjects']
+                    for obj in dataObjects:
+                        if 'mediaURL' in obj:
+                            images.append(obj['mediaURL'])
+            except:
+               print('passing over exception page:',eolPageNumber)
 
             # use sets to remove duplicates.  This assumes the names and images duplicate at the same time. This could
             # be a risky assumption. 
